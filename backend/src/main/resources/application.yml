@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: seller-hub-api
+  jackson:
+    default-property-inclusion: non_null
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+server:
+  port: 8080
