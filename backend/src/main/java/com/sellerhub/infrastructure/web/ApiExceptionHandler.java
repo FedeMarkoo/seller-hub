@@ -5,10 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MissingRequestHeaderException;
 
 import java.time.Instant;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import com.sellerhub.infrastructure.security.ForbiddenException;
+import com.sellerhub.infrastructure.security.UnauthorizedException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -20,7 +23,27 @@ public class ApiExceptionHandler {
     @ExceptionHandler({IllegalStateException.class, MethodArgumentNotValidException.class})
     public ResponseEntity<Map<String, Object>> badRequest(Exception exception) {
         return error(HttpStatus.BAD_REQUEST, exception instanceof MethodArgumentNotValidException
-                ? "La respuesta es obligatoria y debe tener menos de 1000 caracteres" : exception.getMessage());
+                ? "Los datos enviados no son válidos" : exception.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> unauthorized() {
+        return error(HttpStatus.UNAUTHORIZED, "Sesión requerida");
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> forbidden() {
+        return error(HttpStatus.FORBIDDEN, "No tenés permisos para este recurso");
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<Map<String, Object>> missingHeader() {
+        return error(HttpStatus.UNAUTHORIZED, "Sesión requerida");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> invalidArgument(IllegalArgumentException exception) {
+        return error(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     private ResponseEntity<Map<String, Object>> error(HttpStatus status, String message) {

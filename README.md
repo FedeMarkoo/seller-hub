@@ -10,13 +10,13 @@ Aplicación full-stack para que los vendedores consulten sus pedidos y respondan
 - Node.js 20 o superior
 - npm 10 o superior
 
-No requiere una base de datos ni servicios externos.
+Usa persistencia en memoria, sin dependencias externas de base de datos.
 
 ### 1. Iniciar el backend
 
 ```bash
 cd backend
-./mvnw spring-boot:run
+gradle bootRun
 ```
 
 La API queda disponible en `http://localhost:8080`. Podés verificarla en `http://localhost:8080/actuator/health`.
@@ -38,10 +38,16 @@ La demo permite:
 - cambiar entre tres vendedores y filtrar sus pedidos;
 - ver consultas pendientes y respondidas;
 - responder una consulta con validación;
+- crear nuevas preguntas asociadas a un pedido, con notificación interna al vendedor;
+- actualizar estados de pedido respetando transiciones válidas;
+- filtrar pedidos por texto, estado y rango de fechas;
 - ingresar al panel de Operaciones;
 - revisar la cola ordenada por criticidad y antigüedad;
 - consultar ventas, tasa y tiempo medio de respuesta;
+- comparar pedidos y facturación de los últimos 7 días contra el período anterior;
 - restaurar el estado inicial con **Reiniciar demo**.
+
+La demo crea una sesión server-side con expiración de 8 horas y revocación explícita. El selector superior funciona como un falso login: también se conserva al entrar a Operaciones, por lo que cada vendedor sólo ve sus pedidos, preguntas, métricas y cola. El token se envía en `X-Demo-Session`; no es un mecanismo de autenticación productivo y debe reemplazarse por OAuth/OIDC en un entorno real.
 
 ## Datos de ejemplo
 
@@ -59,6 +65,10 @@ curl -X POST http://localhost:8080/api/demo/reset
 
 Para cambiar el conjunto demo, editá el JSON y reiniciá el backend. El campo `ageHours` expresa cuántas horas atrás se creó una pregunta; `responseHours` indica cuánto tardó una respuesta histórica.
 
+## Ejecución con Docker
+
+También podés iniciar backend y frontend con `docker compose up --build`. No requiere ningún servicio adicional.
+
 ## Arquitectura
 
 El backend sigue arquitectura hexagonal:
@@ -75,8 +85,10 @@ infrastructure/web ──► application/service ──► domain/port
 ```
 
 - `domain/model`: entidades, estados y reglas (respuesta única, prioridad por antigüedad).
+- Cada ítem conserva `productId` como identidad estable de catálogo y `product` como snapshot visible del nombre al momento de la compra.
 - `domain/port`: contratos de persistencia sin dependencias de framework.
 - `application/service`: casos de uso y proyecciones para la UI.
+- `application/mapper`: mapeos entidad/DTO generados por MapStruct; los servicios no construyen DTOs manualmente.
 - `infrastructure/web`: controladores REST y manejo uniforme de errores.
 - `infrastructure/persistence`: adaptadores en memoria reemplazables.
 - `config`: beans y carga de datos demo.
@@ -104,17 +116,23 @@ La cola de Operaciones muestra primero la mayor prioridad y, dentro de ella, la 
 | --- | --- | --- |
 | `GET` | `/api/orders?sellerId=seller-01` | Pedidos por vendedor |
 | `GET` | `/api/orders/{id}` | Detalle de pedido |
+| `POST` | `/api/orders/{id}/status` | Cambiar estado con transición válida |
+| `POST` | `/api/orders/{id}/questions` | Crear pregunta (`buyerName`, `text`) |
 | `GET` | `/api/questions?sellerId=seller-01&status=PENDING` | Consultas filtradas |
 | `POST` | `/api/questions/{id}/answer` | Responder (`{"answer":"..."}`) |
 | `GET` | `/api/operations/questions` | Cola pendiente priorizada |
 | `GET` | `/api/operations/metrics` | Métricas operativas |
 | `POST` | `/api/demo/reset` | Restaurar datos demo |
+| `POST` | `/api/demo/session` | Crear sesión demo (`SELLER` u `OPERATIONS`) |
+| `DELETE` | `/api/demo/session` | Revocar sesión demo |
+
+Todos los endpoints de negocio requieren `X-Demo-Session`. En esta demo los listados aceptan `limit` y lo acotan a un máximo de 1.000 elementos para poder explorar el dataset completo de cada vendedor. En producción convendría reemplazarlo por paginación o cursor.
 
 ## Verificación
 
 ```bash
-# backend: 2 pruebas unitarias + 2 de integración
-cd backend && ./mvnw test
+# backend: pruebas unitarias y de integración
+cd backend && gradle test
 
 # frontend: tipos/build, lint y prueba del cliente HTTP
 cd frontend
@@ -125,14 +143,14 @@ npm test
 
 ## Supuestos y decisiones
 
-- La autenticación y autorización quedan fuera del alcance; el selector simula la identidad del vendedor y la navegación simula el rol de Operaciones.
+- La autenticación productiva queda fuera del alcance; la demo sí aplica aislamiento por vendedor, expiración y revocación de sesiones.
 - Los importes se expresan en ARS y la venta bruta no descuenta pedidos cancelados; en producción la definición debería acordarse con Finanzas.
-- La persistencia en memoria favorece una demo reproducible. Los puertos permiten incorporar JPA, MongoDB u otro adaptador sin cambiar los casos de uso.
+- La persistencia en memoria favorece una demo reproducible y no requiere infraestructura externa.
 - Las prioridades representan un SLA simple basado en tiempo. Una implementación productiva podría sumar valor del pedido, riesgo logístico y sentimiento.
-- Responder una consulta es una operación de una sola vez. La edición, auditoría, notificaciones y paginación se consideran extensiones productivas.
-- Se usan colecciones concurrentes para soportar varias solicitudes, pero no se ofrece durabilidad entre reinicios.
+- Responder una consulta es una operación de una sola vez. Las notificaciones están implementadas como puerto con adaptador de logging, listo para reemplazarse por email/webhook.
+- Se usan colecciones concurrentes para soportar varias solicitudes en memoria; los datos se reinician al reiniciar la API.
 
 ## Stack
 
-- Java 21, Spring Boot 3.5, Maven Wrapper, Lombok, JUnit 5
+- Java 21, Spring Boot 3.5, Gradle, Lombok, MapStruct, JUnit 5
 - React, TypeScript, Vite, Lucide, Vitest, ESLint

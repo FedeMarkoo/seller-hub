@@ -9,5 +9,6 @@ public interface OrderRepository {
     List<Order> findAll();
     List<Order> findBySellerId(String sellerId);
     Optional<Order> findById(String id);
+    void save(Order order);
     void replaceAll(List<Order> orders);
 }

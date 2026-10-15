@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
+    /** Stable catalog identity; product is the display snapshot captured at purchase time. */
+    private String productId;
     private String product;
     private int quantity;
     private BigDecimal unitPrice;
