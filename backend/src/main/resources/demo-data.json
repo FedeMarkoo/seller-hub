@@ -1,0 +1,43 @@
+{
+  "orders": [
+    {
+      "id": "ORD-1048", "sellerId": "seller-01", "buyerName": "Lucía Fernández", "buyerEmail": "lucia.fernandez@example.com",
+      "createdAt": "2026-10-07T14:25:00Z", "status": "SHIPPED", "shippingAddress": "Av. Córdoba 1842, CABA",
+      "items": [{"product": "Auriculares inalámbricos Pulse Pro", "quantity": 1, "unitPrice": 89990.00}]
+    },
+    {
+      "id": "ORD-1047", "sellerId": "seller-01", "buyerName": "Martín Suárez", "buyerEmail": "martin.suarez@example.com",
+      "createdAt": "2026-10-06T09:10:00Z", "status": "PROCESSING", "shippingAddress": "San Martín 428, Rosario",
+      "items": [{"product": "Teclado mecánico K87", "quantity": 1, "unitPrice": 67500.00}, {"product": "Mousepad XL", "quantity": 1, "unitPrice": 12900.00}]
+    },
+    {
+      "id": "ORD-1046", "sellerId": "seller-02", "buyerName": "Sofía Ríos", "buyerEmail": "sofia.rios@example.com",
+      "createdAt": "2026-10-04T17:42:00Z", "status": "DELIVERED", "shippingAddress": "Belgrano 922, Mendoza",
+      "items": [{"product": "Cafetera Nórdica 1.2L", "quantity": 1, "unitPrice": 119500.00}]
+    },
+    {
+      "id": "ORD-1045", "sellerId": "seller-02", "buyerName": "Diego Acosta", "buyerEmail": "diego.acosta@example.com",
+      "createdAt": "2026-10-03T12:05:00Z", "status": "SHIPPED", "shippingAddress": "Rivadavia 3301, Córdoba",
+      "items": [{"product": "Set de sartenes Terra", "quantity": 1, "unitPrice": 98500.00}, {"product": "Espátula de silicona", "quantity": 2, "unitPrice": 8200.00}]
+    },
+    {
+      "id": "ORD-1044", "sellerId": "seller-01", "buyerName": "Carolina Vega", "buyerEmail": "carolina.vega@example.com",
+      "createdAt": "2026-10-02T10:30:00Z", "status": "DELIVERED", "shippingAddress": "Alsina 648, Salta",
+      "items": [{"product": "Mochila urbana Metro", "quantity": 1, "unitPrice": 54900.00}]
+    },
+    {
+      "id": "ORD-1043", "sellerId": "seller-03", "buyerName": "Nicolás Paz", "buyerEmail": "nicolas.paz@example.com",
+      "createdAt": "2026-10-01T16:12:00Z", "status": "CANCELLED", "shippingAddress": "Mitre 129, Neuquén",
+      "items": [{"product": "Lámpara de escritorio Halo", "quantity": 2, "unitPrice": 31500.00}]
+    }
+  ],
+  "questions": [
+    {"id": "Q-201", "orderId": "ORD-1048", "sellerId": "seller-01", "buyerName": "Lucía Fernández", "text": "¿Podrían confirmarme el número de seguimiento? El correo todavía no me llegó.", "ageHours": 54, "status": "PENDING"},
+    {"id": "Q-202", "orderId": "ORD-1047", "sellerId": "seller-01", "buyerName": "Martín Suárez", "text": "¿El teclado incluye switches rojos? Lo necesito silencioso para la oficina.", "ageHours": 29, "status": "PENDING"},
+    {"id": "Q-203", "orderId": "ORD-1045", "sellerId": "seller-02", "buyerName": "Diego Acosta", "text": "El paquete figura demorado. ¿Tienen una nueva fecha estimada de entrega?", "ageHours": 13, "status": "PENDING"},
+    {"id": "Q-204", "orderId": "ORD-1046", "sellerId": "seller-02", "buyerName": "Sofía Ríos", "text": "¿La jarra de la cafetera puede lavarse en lavavajillas?", "ageHours": 5, "status": "PENDING"},
+    {"id": "Q-205", "orderId": "ORD-1044", "sellerId": "seller-01", "buyerName": "Carolina Vega", "text": "¿Cómo activo la garantía del producto?", "ageHours": 72, "responseHours": 4, "status": "ANSWERED", "answer": "La garantía se activa automáticamente con tu número de pedido. Guardá la factura que enviamos por correo."},
+    {"id": "Q-206", "orderId": "ORD-1046", "sellerId": "seller-02", "buyerName": "Sofía Ríos", "text": "¿Incluye filtros reutilizables?", "ageHours": 46, "responseHours": 7, "status": "ANSWERED", "answer": "Sí, incluye un filtro permanente lavable y también acepta filtros de papel N°4."},
+    {"id": "Q-207", "orderId": "ORD-1043", "sellerId": "seller-03", "buyerName": "Nicolás Paz", "text": "¿Cuándo se acredita el reintegro de la compra cancelada?", "ageHours": 20, "status": "PENDING"}
+  ]
+}

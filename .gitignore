@@ -1,0 +1,15 @@
+.idea/
+.vscode/
+*.iml
+backend/target/
+backend/.gradle/
+backend/build/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+frontend/vitest.config.js
+frontend/vitest.config.d.ts
+Analisis [Cc]ompleto*/
+.DS_Store
